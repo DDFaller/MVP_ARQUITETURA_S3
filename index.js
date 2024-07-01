@@ -84,4 +84,4 @@ app.delete('/delete', async (req, res) => {
   }
 })
 
-app.listen(3003, () => console.log('Server is running on port 3003'))
+app.listen(3003,'0.0.0.0', () => console.log('Server is running on port 3003'))
