@@ -38,3 +38,28 @@ export const deleteFile = async (userId, fileName) => {
 
   return s3.deleteObject(params).promise()
 }
+
+export const renameFile = async (userId, oldFileName, newFileName) => {
+  const copyParams = {
+    Bucket: process.env.S3_BUCKET_NAME,
+    CopySource: `${process.env.S3_BUCKET_NAME}/${userId}/${oldFileName}`,
+    Key: `${userId}/${newFileName}`
+  }
+
+  const deleteParams = {
+    Bucket: process.env.S3_BUCKET_NAME,
+    Key: `${userId}/${oldFileName}`
+  }
+
+  try {
+    // Copy the object to the new key
+    await s3.copyObject(copyParams).promise()
+    // Delete the original object
+    await s3.deleteObject(deleteParams).promise()
+    console.log(`File renamed from ${oldFileName} to ${newFileName}`)
+    return true
+  } catch (error) {
+    console.error(`Error renaming file from ${oldFileName} to ${newFileName}:`, error)
+    throw error
+  }
+}
